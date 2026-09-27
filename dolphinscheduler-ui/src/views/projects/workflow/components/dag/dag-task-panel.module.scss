@@ -1,0 +1,179 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$blue: #288fff;
+$borderDark: rgba(255, 255, 255, 0.09);
+$borderLight: rgb(239, 239, 245);
+$bgDark: rgb(24, 24, 28);
+$bgLight: #ffffff;
+
+.panel {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.panel-dark {
+  border: 1px solid $borderDark;
+  background-color: $bgDark;
+}
+
+.panel-light {
+  border: 1px solid $borderLight;
+  background-color: $bgLight;
+}
+
+.drag-bar {
+  position: absolute;
+  left: -4px;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  z-index: 10;
+  cursor: col-resize;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background-color: transparent;
+    transition: background-color 0.2s;
+  }
+
+  &:hover::after,
+  &.active::after {
+    background-color: $blue;
+  }
+}
+
+// Collapse / expand handle on the left edge of the panel
+.collapse-bar {
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11;
+  cursor: pointer;
+  border-radius: 4px;
+  color: rgba(0, 0, 0, 0.35);
+  background-color: transparent;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    color: $blue;
+    background-color: rgba(40, 143, 255, 0.1);
+  }
+}
+
+.panel-dark .collapse-bar {
+  color: rgba(255, 255, 255, 0.35);
+
+  &:hover {
+    color: $blue;
+    background-color: rgba(40, 143, 255, 0.2);
+  }
+}
+
+// Collapsed state: hide the resize bar, keep only the handle
+.panel.collapsed {
+  .drag-bar {
+    display: none;
+  }
+}
+
+.panel-header {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 8px 0 12px;
+  display: flex;
+  flex-direction: column;
+
+  // naive-ui internal classes must be global, otherwise CSS modules
+  // hashes the selectors and the rules never match the rendered DOM
+  :global(.n-tabs) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :global(.n-tabs-nav) {
+    flex-shrink: 0;
+  }
+
+  // In non-animated mode the panes are direct children of .n-tabs
+  // (there is no .n-tabs-pane-wrapper element)
+  :global(.n-tab-pane) {
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+  }
+}
+
+.panel-item {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel.dragging .panel-item {
+  pointer-events: none;
+}
+
+.panel-links {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-bottom: 1px solid;
+}
+
+.panel-light .panel-links {
+  border-bottom-color: $borderLight;
+}
+
+.panel-dark .panel-links {
+  border-bottom-color: $borderDark;
+}
+
+.panel-form {
+  flex: 1;
+  // Required for overflow scrolling inside a flex column container,
+  // otherwise min-height:auto keeps the box as tall as its content
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 12px 24px;
+
+  // Make the monaco editor fill the panel width
+  // (the editor widget renders with an inline height of 300px)
+  div[style*='min-height: 150px'] {
+    height: clamp(320px, calc(100vh - 400px), 900px) !important;
+  }
+}
