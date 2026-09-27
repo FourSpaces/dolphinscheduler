@@ -23,7 +23,8 @@ export const useUISettingStore = defineStore({
   state: (): UISettingStore => ({
     logTimer: 0,
     dynamicTask: false,
-    apiTimer: 10000
+    apiTimer: 10000,
+    editPanelMode: false
   }),
   persist: true,
   getters: {
@@ -35,6 +36,9 @@ export const useUISettingStore = defineStore({
     },
     getApiTimer(): number {
       return this.apiTimer
+    },
+    getEditPanelMode(): boolean {
+      return this.editPanelMode
     }
   },
   actions: {
@@ -46,6 +50,9 @@ export const useUISettingStore = defineStore({
     },
     setApiTimer(timer: number): void {
       this.apiTimer = timer
+    },
+    setEditPanelMode(mode: boolean): void {
+      this.editPanelMode = mode
     }
   }
 })

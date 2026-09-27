@@ -260,6 +260,7 @@ const NodeDetailModal = defineComponent({
     return () => (
       <Modal
         show={props.show}
+        width='50%'
         title={
           props.from === 1
             ? `${t('project.task.current_task_settings')}`

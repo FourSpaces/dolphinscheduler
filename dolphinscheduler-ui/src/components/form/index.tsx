@@ -48,9 +48,20 @@ const Form = defineComponent({
   render(props: { meta: IMeta; layout?: GridProps; loading?: boolean }) {
     const { loading, layout, meta } = props
     const { elements = [], ...restFormProps } = meta
+    // Task node forms default to label on the left (one row per field);
+    // consumers can still override via meta (e.g. labelPlacement: 'top')
+    const formProps = {
+      labelPlacement: 'left' as const,
+      labelWidth: 'auto',
+      ...restFormProps
+    }
     return (
       <NSpin show={loading}>
-        <NForm {...restFormProps} rules={meta.rules as FormRules} ref='formRef'>
+        <NForm
+          {...formProps}
+          rules={meta.rules as FormRules}
+          ref='formRef'
+        >
           <NGrid {...layout}>
             {elements.map((element) => {
               const { span = 24, path, widget, ...formItemProps } = element

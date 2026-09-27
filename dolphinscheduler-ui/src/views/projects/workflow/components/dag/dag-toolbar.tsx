@@ -25,7 +25,8 @@ import {
   NSelect,
   NPopover,
   NText,
-  NTag
+  NTag,
+  NSwitch
 } from 'naive-ui'
 import {
   SearchOutlined,
@@ -45,6 +46,7 @@ import { DataUri } from '@antv/x6'
 import { useFullscreen } from '@vueuse/core'
 import { useRoute, useRouter } from 'vue-router'
 import { useThemeStore } from '@/store/theme/theme'
+import { useUISettingStore } from '@/store/ui-setting/ui-setting'
 import type { Graph } from '@antv/x6'
 import StartupParam from './dag-startup-param'
 import VariablesView from '@/views/projects/workflow/instance/components/variables-view'
@@ -80,6 +82,7 @@ export default defineComponent({
     const { t } = useI18n()
 
     const themeStore = useThemeStore()
+    const uiSettingStore = useUISettingStore()
 
     const graph = inject<Ref<Graph | undefined>>('graph', ref())
     const router = useRouter()
@@ -314,6 +317,28 @@ export default defineComponent({
           )}
         </div>
         <div class={Styles['toolbar-right-part']}>
+          {/* Toggle node edit mode: modal or right-side panel */}
+          <div
+            class={`${Styles['toolbar-right-item']} ${Styles['edit-mode-toggle']}`}
+          >
+            <NTooltip
+              v-slots={{
+                trigger: () => (
+                  <NSwitch
+                    size='small'
+                    value={uiSettingStore.getEditPanelMode}
+                    onUpdate:value={(value: boolean) =>
+                      uiSettingStore.setEditPanelMode(value)
+                    }
+                  />
+                ),
+                default: () => t('project.workflow.panel_edit_mode')
+              }}
+            ></NTooltip>
+            <span class={Styles['edit-mode-label']}>
+              {t('project.workflow.panel_edit_mode')}
+            </span>
+          </div>
           {/* Search node */}
           <NTooltip
             v-slots={{

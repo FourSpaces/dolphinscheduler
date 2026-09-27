@@ -59,7 +59,7 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
     {
       type: 'select',
       field: 'sqlType',
-      span: 6,
+      span: 12,
       name: t('project.node.sql_type'),
       options: SQL_TYPES,
       validate: {
@@ -76,7 +76,7 @@ export function useSqlType(model: { [field: string]: any }): IJsonItem[] {
     {
       type: 'select',
       field: 'displayRows',
-      span: querySpan,
+      span: 12,
       name: t('project.node.log_display'),
       options: DISPLAY_ROWS,
       props: {

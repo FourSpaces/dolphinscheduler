@@ -2,17 +2,23 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "jsx": "preserve",
+    "jsxImportSource": "vue", 
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "baseUrl": ".",
+    // "paths": {
+    //   "@/*": ["src/*"]
+    // },
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "date-fns-tz": ["node_modules/date-fns-tz/typings.d.ts"]
     },
+
     "skipLibCheck": true,
     "types": ["vite/client"],
     "plugins": [{ "name": "typescript-plugin-css-modules" }]

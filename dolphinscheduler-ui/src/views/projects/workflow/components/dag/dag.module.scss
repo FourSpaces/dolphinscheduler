@@ -367,6 +367,16 @@ $bgLight: #ffffff;
   .toolbar-right-item {
     margin-right: 10px;
   }
+  .edit-mode-toggle {
+    display: flex;
+    align-items: center;
+
+    .edit-mode-label {
+      margin-left: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+  }
   .node-selector {
     width: 0;
     overflow: hidden;

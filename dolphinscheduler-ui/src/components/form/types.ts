@@ -40,6 +40,7 @@ interface IFormItem {
   showLabel?: boolean
   path: string
   label?: string
+  labelPlacement?: 'left' | 'top'
   widget: any
   span?: number | Ref<number>
   type?: 'custom'

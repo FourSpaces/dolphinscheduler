@@ -131,7 +131,8 @@ Tree.prototype.nodesClass = function (d) {
 /**
  * tree Expand hidden
  */
-Tree.prototype.treeToggles = function (e,clicked_d) { // eslint-disable-line
+Tree.prototype.treeToggles = function (e, clicked_d) {
+  // eslint-disable-line
 
   self.removeTooltip()
 

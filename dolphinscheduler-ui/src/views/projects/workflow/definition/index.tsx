@@ -23,7 +23,8 @@ import {
   NPagination,
   NSpace,
   NTooltip,
-  NPopconfirm
+  NPopconfirm,
+  NSwitch
 } from 'naive-ui'
 import {
   defineComponent,
@@ -115,6 +116,10 @@ export default defineComponent({
 
     const trim = getCurrentInstance()?.appContext.config.globalProperties.trim
 
+    const handleEditPanelModeChange = (value: boolean) => {
+      uiSettingStore.setEditPanelMode(value)
+    }
+
     watch(useI18n().locale, () => {
       createColumns(variables)
     })
@@ -137,6 +142,7 @@ export default defineComponent({
       handleCopyUpdateList,
       ...toRefs(variables),
       uiSettingStore,
+      handleEditPanelModeChange,
       trim
     }
   },
@@ -168,6 +174,23 @@ export default defineComponent({
               )}
             </NSpace>
             <NSpace>
+              <NSpace align='center' wrap={false} size='small'>
+                <NTooltip>
+                  {{
+                    default: () => t('project.workflow.panel_edit_mode'),
+                    trigger: () => (
+                      <NSwitch
+                        size='small'
+                        value={this.uiSettingStore.getEditPanelMode}
+                        onUpdate:value={this.handleEditPanelModeChange}
+                      />
+                    )
+                  }}
+                </NTooltip>
+                <span class='btn-panel-edit-mode'>
+                  {t('project.workflow.panel_edit_mode')}
+                </span>
+              </NSpace>
               <Search
                 placeholder={t('resource.function.enter_keyword_tips')}
                 v-model:value={this.searchVal}

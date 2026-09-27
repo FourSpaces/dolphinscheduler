@@ -49,6 +49,9 @@ import { WorkflowDefinition, WorkflowInstance } from './types'
 import DagSaveModal from './dag-save-modal'
 import ContextMenuItem from './dag-context-menu'
 import TaskModal from '@/views/projects/task/components/node/detail-modal'
+import DagTaskPanel from './dag-task-panel'
+import { useTaskPanel } from './use-task-panel'
+import { useUISettingStore } from '@/store/ui-setting/ui-setting'
 import StartModal from '@/views/projects/workflow/definition/components/start-modal'
 import LogModal from '@/components/log-modal'
 import './x6-style.scss'
@@ -116,6 +119,70 @@ export default defineComponent({
       workflowDefinition,
       removeTasks
     } = useTaskEdit({ graph, definition: toRef(props, 'definition') })
+
+    // Optional plugin: edit task nodes in a right-side tabbed panel
+    // instead of the modal. Controlled by the UI setting store.
+    const uiSettingStore = useUISettingStore()
+    const isPanelMode = computed(() => uiSettingStore.getEditPanelMode)
+    const { tabs, activeCode, openTab, closeTab, renameTab } = useTaskPanel()
+
+    watch(taskModalVisible, (visible) => {
+      if (visible && isPanelMode.value) {
+        openTab({
+          code: currTask.value.code,
+          name: currTask.value.name,
+          taskType: currTask.value.taskType
+        })
+        taskModalVisible.value = false
+      }
+    })
+
+    // When the edit mode is toggled while the modal is open,
+    // transfer the current task to the panel as a tab
+    watch(isPanelMode, (panelMode) => {
+      if (panelMode && taskModalVisible.value) {
+        openTab({
+          code: currTask.value.code,
+          name: currTask.value.name,
+          taskType: currTask.value.taskType
+        })
+        taskModalVisible.value = false
+      }
+    })
+
+    const syncCurrTask = (code: number) => {
+      const task = workflowDefinition.value.taskDefinitionList.find(
+        (t) => t.code === code
+      )
+      if (task) currTask.value = task
+    }
+
+    const onPanelConfirm = ({ data, code }: any) => {
+      syncCurrTask(code)
+      taskConfirm({ data })
+      renameTab(code, data.name)
+    }
+
+    const onPanelClose = (code: number) => {
+      // Behave the same as taskCancel: remove a new unnamed node
+      syncCurrTask(code)
+      taskCancel()
+      closeTab(code)
+    }
+
+    const onPanelActiveCodeChange = (code: number) => {
+      activeCode.value = code
+      syncCurrTask(code)
+      if (props.instance) {
+        currentTaskInstance.value = taskList.value.find(
+          (task: any) => task.taskCode === code
+        )
+      }
+    }
+
+    const onPanelResizeEnd = () => {
+      graph.value?.resize()
+    }
 
     // Right click cell
     const { nodeVariables, menuHide, menuStart, viewLog } = useNodeMenu({
@@ -363,6 +430,22 @@ export default defineComponent({
         <div class={Styles.content}>
           <DagSidebar onDragStart={onDragStart} />
           <DagCanvas onDrop={onDrop} />
+          {isPanelMode.value && (
+            <DagTaskPanel
+              tabs={tabs.value}
+              activeCode={activeCode.value}
+              definition={workflowDefinition}
+              projectCode={props.projectCode}
+              readonly={props.readonly}
+              workflowInstance={props.instance}
+              taskList={taskList.value as any}
+              onUpdate:activeCode={onPanelActiveCodeChange}
+              onConfirm={onPanelConfirm}
+              onClose={onPanelClose}
+              onResizeEnd={onPanelResizeEnd}
+              onViewLog={handleViewLog}
+            />
+          )}
         </div>
         <DagAutoLayoutModal
           visible={layoutVisible.value}

@@ -18,6 +18,7 @@ interface UISettingStore {
   logTimer: number
   dynamicTask: boolean
   apiTimer: number
+  editPanelMode: boolean
 }
 
 export { UISettingStore }

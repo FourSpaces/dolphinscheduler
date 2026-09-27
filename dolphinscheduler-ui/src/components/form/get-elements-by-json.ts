@@ -28,6 +28,10 @@ export default function getElementByJson(
   const rules: IFormRules = {}
   const initialValues: { [field: string]: any } = {}
   const elements: IFormItem[] = []
+  // These items keep the label above the widget (two-row layout):
+  // code editors, custom parameters, pre/post SQL statements and pre tasks
+  const TOP_LABEL_TYPES = ['editor', 'custom-parameters']
+  const TOP_LABEL_FIELDS = ['preStatements', 'postStatements', 'preTasks']
   for (const item of json) {
     const mergedItem = isFunction(item) ? item() : item
     const { name, value, field, children, validate, ...rest } = mergedItem
@@ -36,9 +40,13 @@ export default function getElementByJson(
       initialValues[field] = value
     }
     if (validate) rules[field] = formatValidate(validate)
+    const keepLabelTop =
+      TOP_LABEL_TYPES.includes(mergedItem.type as string) ||
+      TOP_LABEL_FIELDS.includes(field as string)
     const element: IFormItem = {
       showLabel: !!name,
       ...omit(rest, ['type', 'props', 'options']),
+      ...(keepLabelTop ? { labelPlacement: 'top' as const } : {}),
       label: name,
       path: !children ? field : '',
       widget: () => getField(item, fields, rules),
